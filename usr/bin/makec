@@ -1,0 +1,13 @@
+#!/bin/bash
+
+
+T="$(date +%s)"
+make "$@" 2>&1 | tee buildlog_ | mpr
+err=${PIPESTATUS[0]}
+T="$(($(date +%s)-T))"
+STR="$(printf "Done compiling in %02d:%02d:%02d" \
+	"$((T/60/60))" "$((T/60%60))" "$((T%60))" )"
+notify-send $(pwd) "$STR" --icon=dialog-information
+#ding "$(pwd)"
+
+exit $err
