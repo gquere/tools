@@ -1,0 +1,13 @@
+set nu
+syntax on
+set hls
+set clipboard=unnamedplus
+
+let maplocalleader = "œ"
+
+"Fucked up characters get highlighted
+highlight ExtraWhitespace ctermbg=red guibg=red
+autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
+autocmd Syntax * syntax match ExtraWhitespace /\s\+$\| \+\ze\t\+/ containedin=ALL
+autocmd Syntax * syntax match ExtraWhitespace / / containedin=ALL
+
