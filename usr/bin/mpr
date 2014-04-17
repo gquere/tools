@@ -6,7 +6,7 @@ WRAP=$((`tput cols` - 15))
 print_long_line() {
 #	echo "    "$line | sed -r "s/(.{$WRAP})/\1\n      /g"
 	echo -n "  "
-	python /bin/mpr_print_line.py "$line"
+	python /usr/bin/mpr_print_line.py "$line"
 }
 
 while read line; do
