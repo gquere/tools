@@ -33,8 +33,6 @@ if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
     debian_chroot=$(cat /etc/debian_chroot)
 fi
 
-color_prompt=yes
-
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
     xterm-color) color_prompt=yes;;
@@ -56,17 +54,29 @@ if [ -n "$force_color_prompt" ]; then
     fi
 fi
 
-if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u\[\033[00m\]:\[\033[01;34m\]\w\[\033[01;31m\]$(__git_ps1 " (%s)")\[\033[00m\]\$ '
-else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
-fi
 unset color_prompt force_color_prompt
+
+function set-title
+{
+    local title
+
+    full_path=$(git rev-parse --show-toplevel 2>/dev/null)
+    # ^ will exit with 0 and empty string if called from .git
+
+    if [ $? -eq 0 -a -n "${full_path}" ]
+    then
+        title=$(basename "${full_path}")
+    else
+        title="${USER}@${HOSTNAME}:${PWD/~/\~}"
+    fi
+    echo -ne "\033]2;${title}\007"
+}
 
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
 xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u: \w\a\]$PS1"
+    #PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u: \w\a\]$PS1"
+    export PROMPT_COMMAND="set-title"
     ;;
 *)
     ;;
@@ -107,10 +117,6 @@ alias l.='ls -d .* --color=auto'
 # colored gitlog
 alias gl="git log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 
-alias makee='export TOPDIR=$PWD; makec -C'
-################ DONE. THAT'LL DO PIG, THAT'LL DO #############################################
-
-
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
@@ -131,12 +137,37 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
 xset b 0
-setterm -blength 0
+#setterm -blength 0
+WHITE="\[\033[00m\]"
+GREEN="\[\033[01;32m\]"
+BLUE="\[\033[01;34m\]"
+RED="\[\033[01;31m\]"
 
-# shoudln't be there but ain't nobody got time for that anyways ?
-#sh ~/dualscreen.sh
+# colored manpages
+man() {
+    env LESS_TERMCAP_mb=$'\E[01;31m' \
+    LESS_TERMCAP_md=$'\E[01;38;5;74m' \
+    LESS_TERMCAP_me=$'\E[0m' \
+    LESS_TERMCAP_se=$'\E[0m' \
+    LESS_TERMCAP_so=$'\E[38;5;246m' \
+    LESS_TERMCAP_ue=$'\E[0m' \
+    LESS_TERMCAP_us=$'\E[04;38;5;146m' \
+    man "$@"
+}
 
-# git outside repo <3
-#export GIT_PROXY_COMMAND=git-proxy.sh
+# sets color on bash return error
+color() {
+    if [[ $? == 0 ]]; then
+        echo "${WHITE}"
+    else
+        echo "${RED} fail"
+    fi
+}
 
-export PATH=$PATH:~/klocwork-9.1/bin
+color_prompt=yes
+if [ "$color_prompt" = yes ]; then
+    PS1="\$(if [[ \$? == 0 ]]; then bla=1 ; else echo \"${RED} \$? \"; fi)${debian_chroot:+($debian_chroot)}${GREEN}\u${WHITE}:${BLUE}\w ${RED}\$(__git_ps1 '(%s)')${WHITE}$ "
+else
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+fi
+
