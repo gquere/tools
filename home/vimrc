@@ -3,11 +3,13 @@ syntax on
 set hls
 set clipboard=unnamedplus
 
-let maplocalleader = "œ"
+set tabstop=4
+set shiftwidth=4
+set expandtab
+autocmd FileType make set noexpandtab
 
 "Fucked up characters get highlighted
 highlight ExtraWhitespace ctermbg=red guibg=red
 autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
 autocmd Syntax * syntax match ExtraWhitespace /\s\+$\| \+\ze\t\+/ containedin=ALL
 autocmd Syntax * syntax match ExtraWhitespace / / containedin=ALL
-
