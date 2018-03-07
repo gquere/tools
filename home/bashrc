@@ -9,7 +9,7 @@ if [ -f /etc/bash_completion ]; then
     . /etc/bash_completion
 fi
 
-if [ -f ~/.bash_git]; then
+if [ -f ~/.bash_git ]; then
     source ~/.bash_git
 fi
 
@@ -61,4 +61,4 @@ man() {
 }
 
 # PS1 ##########################################################################
-PS1="\$(if [[ \$? != 0 ]]; then echo \"${RED} \$? \"; fi)${GREEN}\u${WHITE} ${BLUE}\w ${RED}\$(__git_ps1 '(%s)')${WHITE} "
+PS1="\$(if [[ \$? != 0 ]]; then echo \"${RED} \$? \"; fi)${GREEN}\u${WHITE} ${BLUE}\w ${RED}\$(__git_ps1 '(%s) ')${WHITE}"
