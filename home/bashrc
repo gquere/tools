@@ -61,4 +61,10 @@ man() {
 }
 
 # PS1 ##########################################################################
-PS1="\$(if [[ \$? != 0 ]]; then echo \"${RED} \$? \"; fi)${GREEN}\u${WHITE} ${BLUE}\w ${RED}\$(__git_ps1 '(%s) ')${WHITE}"
+USERCOLOR=$GREEN
+if [ "$EUID" -eq 0 ]
+then
+    USERCOLOR=$RED
+fi
+
+PS1="\$(ret=\$?; if [[ \$ret != 0 ]]; then echo \"${RED} \$ret \"; fi)${USERCOLOR}\u${WHITE} ${BLUE}\w ${RED}\$(__git_ps1 '(%s) ')${WHITE}"
