@@ -1,8 +1,8 @@
 # HISTORY ######################################################################
 HISTCONTROL=ignoreboth
 shopt -s histappend
-HISTSIZE=10000000
-HISTFILESIZE=2000000
+HISTSIZE=
+HISTFILESIZE=
 
 # COMPLETION ###################################################################
 if [ -f /etc/bash_completion ]; then
